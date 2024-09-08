@@ -66,17 +66,21 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_type: str = update.message.chat.type
     text: str = update.message.text
 
-    print(f'User({update.message.chat.first_name}: {update.message.chat.id}) in chat({message_type}) says: {text}')
+    name = update.message.chat.first_name
+    id = update.message.chat.id
 
-    if message_type == 'group':
+    if 'group' in message_type:
         if BOT_USERNAME in text:
+            name = update.message.from_user.first_name
+            id = update.message.from_user.id
             processed: str = text.replace(BOT_USERNAME, '').strip()
-            response: str = handle_text(processed, f'{update.message.chat.first_name}')
+            response: str = handle_text(processed, f'{update.message.from_user.first_name}')
         else:
             return
     else:
         response: str = handle_text(text, f'{update.message.chat.first_name}')
 
+    print(f'User({name}: {id}) in chat({message_type}) says: {text}')
     print(f'Bot: {response}')
     await update.message.reply_text(response)
 
